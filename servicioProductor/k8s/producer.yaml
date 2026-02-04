@@ -1,0 +1,32 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: productor
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: productor
+  template:
+    metadata:
+      labels:
+        app: productor
+    spec:
+      containers:
+        - name: productor
+          image: servicioproductor/productor:latest
+          imagePullPolicy: IfNotPresent
+          env:
+            - name: REDIS_HOST
+              value: "redis"
+            - name: REDIS_PORT
+              value: "6379"
+            - name: SENSOR_ID
+              value: "rbt-01"
+            - name: REDIS_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: redis-secret
+                  key: redis-password
+          ports:
+            - containerPort: 1111
